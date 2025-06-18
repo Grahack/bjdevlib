@@ -1,0 +1,68 @@
+# Nom du projet
+TARGET = TravelBoxBasicExample
+SRC_DIR = .
+OBJ_DIR = build
+
+# Fichier source principal
+SRC = $(SRC_DIR)/TravelBoxBasicExample.c
+
+# Nom du fichier exécutable
+ELF = $(OBJ_DIR)/$(TARGET).elf
+
+# Nom du fichier binaire
+BIN = $(OBJ_DIR)/$(TARGET).bin
+
+# Nom du fichier hexadécimal
+HEX = $(OBJ_DIR)/$(TARGET).hex
+
+# Nom du fichier listé
+LST = $(OBJ_DIR)/$(TARGET).lst
+
+# Nom du fichier map
+MAP = $(OBJ_DIR)/$(TARGET).map
+
+# Nom du fichier de dépendances
+DEP = $(OBJ_DIR)/$(TARGET).d
+
+# Outils de compilation et de liaison
+CC = avr-gcc
+OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
+SIZE = avr-size
+
+# Options de compilation
+CFLAGS = -Wall -Os -g -mmcu=atmega64 -DF_CPU=8000000UL -I bjdevlib/tbseries/include -I bjdevlib/lcdlib
+
+# Répertoire des fichiers objets
+OBJ = $(OBJ_DIR)/$(TARGET).o
+
+# Règles de compilation
+$(OBJ_DIR)/$(TARGET).o: $(SRC)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(ELF): $(OBJ)
+	$(CC) $(OBJ) -o $(ELF) -mmcu=atmega64
+
+$(BIN): $(ELF)
+	$(OBJCOPY) -O binary $(ELF) $(BIN)
+
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex $(ELF) $(HEX)
+
+$(LST): $(ELF)
+	$(OBJDUMP) -h -S $(ELF) > $(LST)
+
+$(MAP): $(ELF)
+	$(SIZE) -A $(ELF) > $(MAP)
+
+all: $(BIN) $(HEX) $(LST) $(MAP)
+
+flash: $(BIN)
+	avrdude -c usbasp -p m64 -U flash:w:$(BIN):i
+
+clean:
+	rm -rf $(OBJ_DIR)
+
+.PHONY: all flash clean
+
