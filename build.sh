@@ -7,11 +7,11 @@ files=(adc bjdevlib_tb button crc8 expression led lldled midi onewire pedal_led 
 for file in "${files[@]}"
 do
  echo "Compiling bjdevlib/tbseries/src/$file.c to build/$file.o..."
- /usr/bin/avr-gcc -c $CFLAGS_c_o -o build/lcd_tb.o bjdevlib/lcdlib/lcd_tb.c
+ /usr/bin/avr-gcc -c $CFLAGS_c_o -o build/$file.o bjdevlib/tbseries/src/$file.c
 done
 
- echo "Compiling bjdevlib/tbseries/src/$file.c to build/$file.o..."
- /usr/bin/avr-gcc -c $CFLAGS_c_o -o build/$file.o bjdevlib/tbseries/src/$file.c
+echo "Compiling bjdevlib/tbseries/liblcdlcd_tb.c to build/lcd_tb.o..."
+/usr/bin/avr-gcc -c $CFLAGS_c_o -o build/lcd_tb.o bjdevlib/lcdlib/lcd_tb.c
 
 echo "Compiling Banana.c to build/Banana.o..."
 /usr/bin/avr-gcc -c $CFLAGS_c_o -o build/Banana.o Banana.c
