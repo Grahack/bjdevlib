@@ -1,23 +1,48 @@
-// F_CPU tells util/delay.h our clock frequency
-//#define F_CPU 8000000UL	// Orangutan frequency (8MHz)
-#define F_CPU 20000000UL	// Baby Orangutan frequency (20MHz)
+/*
+ * Custom firmware for the BJ-TB5
+ * @file    Banana.c
+ *
+ * Greatly inspired by an example file
+ */
+
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdlib.h>
 
-void delayms( uint16_t millis ) {
-	while ( millis ) {
-		_delay_ms( 1 );
-		millis--;
-	}
-}
+#include "bjdevlib_tb.h"
+#include "lcd_tb.h"
 
-int main( void ) {
-	DDRD |= 1 << PD1;			// set LED pin PD1 to output
-	while ( 1 ) {
-		PORTD &= ~( 1 << PD1 );	// LED off
-		delayms( 900 );			// delay 900 ms
-		PORTD |= 1 << PD1; 		// LED on
-		delayms( 100 );			// delay 100 ms
-	}
-	return 0;
+#define MIDI_CHANNEL 9
+uint8_t noteNumbers[5] = {100, 103, 102, 101, 104};
+char* display[5] = {"PREV", "REC ", "PLAY", "NEXT", "CLR "};
+
+int main(void)
+{
+    initBjDevLib();
+
+    LCDInit(LS_ULINE);
+    LcdHideCursor();
+    LCDWriteString((char*)"   Banana FC");
+    
+    ledSetColorAll(COLOR_RED,    true);
+    ledSetColor(0, COLOR_YELLOW, true);
+    ledSetColor(1, COLOR_RED,    true);
+    ledSetColor(2, COLOR_GREEN,  true);
+    ledSetColor(3, COLOR_YELLOW, true);
+    ledSetColor(4, COLOR_RED,    true);
+
+    ButtonEvent lastButtonEvent;
+    uint8_t buttonNumber;
+    
+    while(1)
+    {
+        lastButtonEvent = getButtonLastEvent();
+        if(lastButtonEvent.actionType_ == BUTTON_PUSH)
+        {
+            buttonNumber = lastButtonEvent.buttonNum_;
+            midiSendNoteOn(noteNumbers[buttonNumber], 127, MIDI_CHANNEL);
+            LCDGotoXY(5, 1);
+            LCDWriteString(display[buttonNumber]);
+        }
+    }
 }
