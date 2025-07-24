@@ -40,6 +40,8 @@
 
 void expPedalsCallback(PedalNumber n, uint8_t pos)
 {
+    // Only read EXP P2 port
+    if (n != 0) return;
     // convert from 50->127 to 0->127
     float min = 50.0;
     float max = 127.0;
@@ -69,7 +71,21 @@ int main(void)
 
     ButtonEvent lastButtonEvent;
     
+    // Display positions
     uint8_t xTextForButtons = 8;
+    // Trigger handling
+    uint8_t state = 0;    // 0=idle, 1=looking for peak, 2=ignore aftershocks
+    uint8_t maxRead = 0;  // used to detect the peak of the piezo signal
+    uint8_t refresh = 255; // number of loops to wait for next detection
+    uint8_t ticks = 0;    // if >0 we have to wait
+    uint8_t v1max = 255;  // max value read
+    uint8_t v1min = 221;  // min value read
+    uint8_t v2max = 127;  // max MIDI velocity
+    uint8_t v2min = 10;   // min MIVI velocity
+    uint8_t margin = 15;  // piezo is very sensitive, used to prevent false +
+    uint8_t v1gap = v1max-v1min;
+    uint8_t v2gap = v2max-v2min;
+
     while(1)
     {
         expProcess();  // exp pedal continuous scan, see the callback
@@ -125,6 +141,53 @@ int main(void)
                     break;
                 case 4:
                     break;
+            }
+        }
+
+        // Read EXP P2 port to detect trigger input
+        uint8_t expRead = adcRead8MsbBit(EXP_P2_PIN);
+
+        // inspiration from:
+        // https://forum.pjrc.com/index.php?threads/piezo-velocity.49815/
+        switch (state) {
+        // Idle state: wait for any reading above threshold.
+        case 0:
+        if(expRead > v1min + margin)
+        {
+            maxRead = expRead;
+            state = 1;
+        }
+        break;
+
+        // Peak Tracking state: capture largest reading
+        case 1:
+        if(expRead > maxRead)
+        {
+            // still waiting for the peak...
+            maxRead = expRead;
+        } else {
+            // we have a peak so we send MIDI
+            uint8_t velo = (maxRead-v1min)*v2gap/v1gap + v2min;
+            // 38 is the MIDI num of the kick
+            midiSendNoteOn(38, velo, MIDI_CHANNEL);
+            LCDGotoXY(12, 1);
+            LCDWriteString("KICK");
+            midiSendNoteOff(38, 0, MIDI_CHANNEL);
+            // and we go to Ignore aftershock state
+            ticks = refresh;
+            state = 2;
+        }
+        break;
+
+        // Ignore Aftershock state: wait for things to be quiet again.
+        default:
+            ticks--;
+            if(ticks == 0)
+            {
+                // go back to idle
+                state = 0;
+                maxRead = 0;
+                LCDWriteString("    ");
             }
         }
     }
