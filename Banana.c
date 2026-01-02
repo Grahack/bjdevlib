@@ -78,8 +78,24 @@ int main(void)
             // still waiting for the peak...
             maxRead = expRead;
         } else {
+            // afficher maxRead puis les seuils pour velo 64 110 et 127
+            char str[4];
+            sprintf(str, "%d", maxRead);
+            LCDGotoXY(0, 1);
+            LCDWriteString("   ");
+            LCDGotoXY(0, 1);
+            LCDWriteString(str);
             // we have a peak so we send MIDI
-            uint8_t velo = (maxRead-v1min)*v2gap/v1gap + v2min;
+            uint8_t velo = 0;
+            if(maxRead < v1min + 4*v1gap/5)
+            {
+                velo = 64;
+            } else if(maxRead < v1min + 4*v1gap/5)
+            {
+                velo = 110;
+            } else {
+                velo = 110;
+            }
             // 38 is the MIDI num of the kick
             midiSendNoteOn(38, velo, MIDI_CHANNEL);
             LCDGotoXY(12, 1);
@@ -99,6 +115,7 @@ int main(void)
                 // go back to idle
                 state = 0;
                 maxRead = 0;
+                LCDGotoXY(12, 1);
                 LCDWriteString("    ");
             }
         }
