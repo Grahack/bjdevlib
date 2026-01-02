@@ -38,12 +38,12 @@ int main(void)
     uint8_t maxRead = 0;  // used to detect the peak of the piezo signal
     uint8_t refresh = 255; // number of loops to wait for next detection
     uint8_t ticks = 0;    // if >0 we have to wait
-    uint8_t v1max = 255;  // max value read
     uint8_t v1min = 221;  // min value read
+    uint8_t v1max = 255;  // max value read
+    uint8_t v2min = 10;   // min MIDI velocity
     uint8_t v2max = 127;  // max MIDI velocity
-    uint8_t v2min = 10;   // min MIVI velocity
     uint8_t margin = 15;  // piezo is very sensitive, used to prevent false +
-    uint8_t v1gap = v1max-v1min;
+    uint8_t v1gap = v1max-v1min;  // for curve calculations
     uint8_t v2gap = v2max-v2min;
 
     while(1)
