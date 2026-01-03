@@ -12,7 +12,8 @@
 #include "bjdevlib_tb.h"
 #include "lcd_tb.h"
 
-#define MIDI_CHANNEL 7  // chan 8 on the M8
+#define MM2_CHANNEL 0  // chan 1 is Micromonsta 2
+#define M8_CHANNEL  7  // chan 8 on the M8
 
 /*  +---------+
  *  | 4     5 |   BJ buttons, numbered from 0 in this firmware
@@ -34,8 +35,6 @@
 #define M8_U 6
 #define M8_D 7
 
-char* display[5] = {" UP ", "CUE ", "DOWN", "    ", "    "};
-
 int main(void)
 {
     initBjDevLib();
@@ -47,8 +46,8 @@ int main(void)
     ledSetColorAll(COLOR_BLACK,  true);
     ledSetColor(0, COLOR_YELLOW, true);
     ledSetColor(1, COLOR_GREEN,  true);
-    ledSetColor(2, COLOR_YELLOW, true);
-    ledSetColor(3, COLOR_RED,    true);
+    ledSetColor(2, COLOR_BLACK,  true);
+    ledSetColor(3, COLOR_YELLOW, true);
     ledSetColor(4, COLOR_RED,    true);
 
     ButtonEvent lastButtonEvent;
@@ -60,22 +59,50 @@ int main(void)
         {
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
             LCDGotoXY(5, 1);
+            char* display[5] = {"DOWN", "CUE ", "SUST", " UP ", "PLAY"};
             LCDWriteString(display[buttonNumber]);
             switch (buttonNumber)
             {
                 case 0:
-                    midiSendNoteOn(M8_U, 127, MIDI_CHANNEL);
-                    midiSendNoteOff(M8_U, 127, MIDI_CHANNEL);
+                    midiSendNoteOn(M8_D, 127, M8_CHANNEL);
+                    midiSendNoteOff(M8_D, 127, M8_CHANNEL);
                     break;
                 case 1:
-                    midiSendNoteOn(M8_L, 127, MIDI_CHANNEL);
-                    midiSendNoteOn(M8_P, 127, MIDI_CHANNEL);
-                    midiSendNoteOff(M8_P, 127, MIDI_CHANNEL);
-                    midiSendNoteOff(M8_L, 127, MIDI_CHANNEL);
+                    midiSendNoteOn(M8_L, 127, M8_CHANNEL);
+                    midiSendNoteOn(M8_P, 127, M8_CHANNEL);
+                    midiSendNoteOff(M8_P, 127, M8_CHANNEL);
+                    midiSendNoteOff(M8_L, 127, M8_CHANNEL);
                     break;
                 case 2:
-                    midiSendNoteOn(M8_D, 127, MIDI_CHANNEL);
-                    midiSendNoteOff(M8_D, 127, MIDI_CHANNEL);
+                    midiSendControlChange(64, 127, MM2_CHANNEL);
+                    break;
+                case 3:
+                    midiSendNoteOn(M8_U, 127, M8_CHANNEL);
+                    midiSendNoteOff(M8_U, 127, M8_CHANNEL);
+                    break;
+                case 4:
+                    midiSendNoteOn(M8_P, 127, M8_CHANNEL);
+                    midiSendNoteOff(M8_P, 127, M8_CHANNEL);
+                    break;
+            }
+        }
+        else if(lastButtonEvent.actionType_ == BUTTON_RELEASE)
+        {
+            uint8_t buttonNumber = lastButtonEvent.buttonNum_;
+            LCDGotoXY(5, 1);
+            LCDWriteString("    ");
+            switch (buttonNumber)
+            {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    midiSendControlChange(64, 0, MM2_CHANNEL);
+                    break;
+                case 3:
+                    break;
+                case 4:
                     break;
             }
         }
