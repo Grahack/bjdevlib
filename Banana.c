@@ -52,13 +52,14 @@ int main(void)
 
     ButtonEvent lastButtonEvent;
     
+    uint8_t xTextForButtons = 8;
     while(1)
     {
         lastButtonEvent = getButtonLastEvent();
         if(lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
-            LCDGotoXY(5, 1);
+            LCDGotoXY(xTextForButtons, 1);
             char* display[5] = {"DOWN", "CUE ", "SUST", " UP ", "PLAY"};
             LCDWriteString(display[buttonNumber]);
             switch (buttonNumber)
@@ -89,7 +90,7 @@ int main(void)
         else if(lastButtonEvent.actionType_ == BUTTON_RELEASE)
         {
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
-            LCDGotoXY(5, 1);
+            LCDGotoXY(xTextForButtons, 1);
             LCDWriteString("    ");
             switch (buttonNumber)
             {
