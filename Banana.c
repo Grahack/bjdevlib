@@ -35,13 +35,27 @@
 #define M8_U 6
 #define M8_D 7
 
+void expPedalsCallback(PedalNumber n, uint8_t pos)
+{
+    // convert from 50->127 to 0->127
+    float min = 50.0;
+    float max = 127.0;
+    pos = (uint8_t)((float)pos-min)*(max/(max-min));
+    midiSendControlChange(7, pos, MM2_CHANNEL); // CC, val, chan
+    LCDWriteIntXY(4, 1, pos, 3);
+}
+
 int main(void)
 {
     initBjDevLib();
 
+    expRegisterPedalChangePositionCallback(expPedalsCallback);
+
     LCDInit(LS_ULINE);
     LcdHideCursor();
     LCDWriteString((char*)"   Banana FC");
+    LCDGotoXY(0, 1);
+    LCDWriteString((char*)"EXP:");
     
     ledSetColorAll(COLOR_BLACK,  true);
     ledSetColor(0, COLOR_YELLOW, true);
@@ -55,6 +69,7 @@ int main(void)
     uint8_t xTextForButtons = 8;
     while(1)
     {
+        expProcess();  // exp pedal continuous scan, see the callback
         lastButtonEvent = getButtonLastEvent();
         if(lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
