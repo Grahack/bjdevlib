@@ -16,16 +16,19 @@
 #define M8_CHANNEL  7  // chan 8 on the M8
 
 /*  +---------+
- *  | 4     5 |   BJ buttons, numbered from 0 in this firmware
- *  |         |
- *  | 1  2  3 |   For buttons 1 2 3  I want: UP LEFT+PLAY DOWN
- *  +---------+
+ *  | 4     5 |   foot buttons, numbered from 0 to 4 in this firmware
+ *  |    X    |   X is where you find the hand buttons
+ *  | 1  2  3 |          labelled Inc(>) Dec(<) Up Down Load/OK Setup/No
+ *  +---------+          numbered   5      6     7   8     9      10
  *
- *  M8 controls
- *  key  P S E O L R U D
- *  note 0 1 2 3 4 5 6 7
+ *  * 1 to 5 control the M8:
+ *    * 4/1 is Up/Down, 2 is Left+Play (to cue a row)
+ *    * 5 is just Play but also used to stop playback
+ *    * 3 is Mute the selected tracks (use the arrows, see below)
+ *  * <> to scroll through the tracks, down to prepare for a Mute
  */
 
+// M8 keys to MIDI notes (Play Shift Edit Option Left Right Up Down)
 #define M8_P 0
 #define M8_S 1
 #define M8_E 2
@@ -73,9 +76,11 @@ int main(void)
         lastButtonEvent = getButtonLastEvent();
         if(lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
+            LOG(SEV_INFO, "Debug works : %d", 2+3);
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
             LCDGotoXY(xTextForButtons, 1);
-            char* display[5] = {"DOWN", "CUE ", "SUST", " UP ", "PLAY"};
+            char* display[11] = {"DOWN", "CUE ", "SUST", " UP ", "PLAY",
+                                "5   ", "6   ", "7   ", "8   ", "9   ", "10  "};
             LCDWriteString(display[buttonNumber]);
             switch (buttonNumber)
             {
