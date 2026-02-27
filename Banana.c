@@ -12,7 +12,7 @@
 #include "bjdevlib_tb.h"
 #include "lcd_tb.h"
 
-#define MM2_CHANNEL 0  // chan 1 is Micromonsta 2
+#define MM2_CHANNEL 3  // chan 4 is Micromonsta 2
 #define M8_CHANNEL  7  // chan 8 on the M8
 
 /*  +---------+
