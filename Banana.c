@@ -100,24 +100,24 @@ int main(void)
             LCDWriteString(display[buttonNumber]);
             switch (buttonNumber)
             {
-                case 0:
+                case 0:  // button 1
                     midiSendNoteOn(M8_D, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_D, 127, M8_CHANNEL);
                     break;
-                case 1:
+                case 1:  // button 2
                     midiSendNoteOn(M8_L, 127, M8_CHANNEL);
                     midiSendNoteOn(M8_P, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_P, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_L, 127, M8_CHANNEL);
                     break;
-                case 2:
+                case 2:  // button 3
                     midiSendControlChange(64, 127, MM2_CHANNEL);
                     break;
-                case 3:
+                case 3:  // button 4
                     midiSendNoteOn(M8_U, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_U, 127, M8_CHANNEL);
                     break;
-                case 4:
+                case 4:  // button 5
                     midiSendNoteOn(M8_P, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_P, 127, M8_CHANNEL);
                     break;
