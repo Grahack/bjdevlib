@@ -86,9 +86,9 @@ int main(void)
     uint8_t v1gap = v1max-v1min;  // for curve calculations
     uint8_t v2gap = v2max-v2min;
 
+
     while (1)
     {
-        expProcess();  // exp pedal continuous scan, see the callback
         lastButtonEvent = getButtonLastEvent();
         if (lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
@@ -144,9 +144,12 @@ int main(void)
             }
         }
 
+        // Read EXP P1 port to handle the exp pedal
+        // See the callback before main
+        expProcess();
+
         // Read EXP P2 port to detect trigger input
         uint8_t expRead = adcRead8MsbBit(EXP_P2_PIN);
-
         // inspiration from:
         // https://forum.pjrc.com/index.php?threads/piezo-velocity.49815/
         switch (state) {
