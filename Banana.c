@@ -182,7 +182,7 @@ int main(void)
             maxRead = expRead;
         } else {
             // afficher maxRead puis les seuils pour velo 64 110 et 127
-            char str[4];
+            char str[6];
             sprintf(str, "%d", maxRead);
             LCDGotoXY(0, 1);
             LCDWriteString("   ");
