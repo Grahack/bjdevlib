@@ -1,10 +1,12 @@
+#!/bin/bash
+
 CFLAGS_c_o="-g -Os -Wall -mcall-prologues -mmcu=atmega64 -I bjdevlib/tbseries/include -I bjdevlib/lcdlib -DF_CPU=8000000UL -DTB_5_DEVICE"
 
 mkdir -p build
 
-files=(adc bjdevlib_tb button crc8 expression led lldled midi onewire pedal_led portio timer uart unique_id)
+files="adc bjdevlib_tb button crc8 expression led lldled midi onewire pedal_led portio timer uart unique_id"
 
-for file in "${files[@]}"
+for file in $files
 do
  echo "Compiling bjdevlib/tbseries/src/$file.c to build/$file.o..."
  /usr/bin/avr-gcc -c $CFLAGS_c_o -o build/$file.o bjdevlib/tbseries/src/$file.c
