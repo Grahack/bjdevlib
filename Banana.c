@@ -200,7 +200,7 @@ int main(void)
             {
                 velo = 110;
             } else {
-                velo = 110;
+                velo = 127;
             }
             // 38 is the MIDI num of the kick
             midiSendNoteOn(38, velo, M8_CHANNEL);
