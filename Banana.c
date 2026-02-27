@@ -86,11 +86,11 @@ int main(void)
     uint8_t v1gap = v1max-v1min;  // for curve calculations
     uint8_t v2gap = v2max-v2min;
 
-    while(1)
+    while (1)
     {
         expProcess();  // exp pedal continuous scan, see the callback
         lastButtonEvent = getButtonLastEvent();
-        if(lastButtonEvent.actionType_ == BUTTON_PUSH)
+        if (lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
             LOG(SEV_INFO, "Debug works : %d", 2+3);
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
