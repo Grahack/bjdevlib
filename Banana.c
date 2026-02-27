@@ -121,6 +121,18 @@ int main(void)
                     midiSendNoteOn(M8_P, 127, M8_CHANNEL);
                     midiSendNoteOff(M8_P, 127, M8_CHANNEL);
                     break;
+                case 5:  // Inc or Right
+                    break;
+                case 6:  // Dec or Left
+                    break;
+                case 7:  // Up
+                    break;
+                case 8:  // Down
+                    break;
+                case 9:  // Load / OK
+                    break;
+                case 10: // Setup / No
+                    break;
             }
         }
         else if(lastButtonEvent.actionType_ == BUTTON_RELEASE)
