@@ -178,6 +178,9 @@ int main(void)
             LCDWriteString(str);
             // we have a peak so we send MIDI
             uint8_t velo = 0;
+            // I wanted to compute velo between v2min and v2max
+            // but I can only detect 3 states :/
+            velo = v2gap;  // dummy, just to avoid compiler warnings
             if(maxRead < v1min + 4*v1gap/5)
             {
                 velo = 64;
