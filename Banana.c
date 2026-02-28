@@ -325,10 +325,10 @@ int main(void)
                 velo = 127;
             }
             // 38 is the MIDI num of the kick
-            midiSendNoteOn(38, velo, M8_CHANNEL);
+            midiSendNoteOn(38, velo, KICK_CHANNEL);
             LCDGotoXY(12, 1);
             LCDWriteString("KICK");
-            midiSendNoteOff(38, 0, M8_CHANNEL);
+            midiSendNoteOff(38, 0, KICK_CHANNEL);
             // and we go to Ignore aftershock state
             ticks_kick = refresh_kick;
             state = 2;
