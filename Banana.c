@@ -12,8 +12,9 @@
 #include "bjdevlib_tb.h"
 #include "lcd_tb.h"
 
-#define MM2_CHANNEL 3  // chan 4 is Micromonsta 2
-#define M8_CHANNEL  7  // chan 8 on the M8
+#define MM2_CHANNEL  3 // chan 4 is Micromonsta 2
+#define M8_CHANNEL   7 // chan 8 on the M8 (CC MAP CHAN)
+#define KICK_CHANNEL 9 // chan 10 for the kick
 
 /*  +---------+
  *  | 4     5 |   foot buttons, numbered from 0 to 4 in this firmware
@@ -133,19 +134,7 @@ void updateAfterButtons(uint8_t buttonNumber, uint8_t status)
                                 "PLAY   "};
             LCDWriteString(display[buttonNumber]);
         }
-        else if (buttonNumber == TB_U)
-        {
-            if (tracks_conf[tracks_currently_edited] < 2)
-                tracks_conf[tracks_currently_edited]++;
-            updateMutesAfterButtons();
-        }
-        else if (buttonNumber == TB_D)
-        {
-            if (tracks_conf[tracks_currently_edited] > 0)
-                tracks_conf[tracks_currently_edited]--;
-            updateMutesAfterButtons();
-        }
-        else if (buttonNumber == TB_L || buttonNumber == TB_R)
+        else
         {
             updateMutesAfterButtons();
         }
@@ -207,7 +196,25 @@ int main(void)
                     midiSendNoteOff(M8_L, 127, M8_CHANNEL);
                     break;
                 case 2:  // button 3
-                    midiSendControlChange(64, 127, MM2_CHANNEL);
+                    tracks_switch_state = !tracks_switch_state;
+                    // Mute/Unmute the selected tracks
+                    for (int i=0; i<8; i++)
+                    {
+                        if (tracks_switch_state)
+                        {
+                            if (tracks_conf[i] == 0)
+                                midiSendNoteOn(M8_mute_notes[i], 127, M8_CHANNEL);
+                            if (tracks_conf[i] == 2)
+                                midiSendNoteOff(M8_mute_notes[i], 127, M8_CHANNEL);
+                        }
+                        else
+                        {
+                            if (tracks_conf[i] == 0)
+                                midiSendNoteOff(M8_mute_notes[i], 127, M8_CHANNEL);
+                            if (tracks_conf[i] == 2)
+                                midiSendNoteOn(M8_mute_notes[i], 127, M8_CHANNEL);
+                        }
+                    }
                     break;
                 case 3:  // button 4
                     midiSendNoteOn(M8_U, 127, M8_CHANNEL);
@@ -224,8 +231,24 @@ int main(void)
                     if (tracks_currently_edited > 0) tracks_currently_edited--;
                     break;
                 case 7:  // Up
+                    if (tracks_currently_edited == 8) break;
+                    if (tracks_conf[tracks_currently_edited] < 2)
+                        tracks_conf[tracks_currently_edited]++;
+                    if (tracks_conf[tracks_currently_edited] == 2)
+                    {
+                        uint8_t note = M8_mute_notes[tracks_currently_edited];
+                        midiSendNoteOn(note, 127, M8_CHANNEL);
+                    }
                     break;
                 case 8:  // Down
+                    if (tracks_currently_edited == 8) break;
+                    uint8_t note = M8_mute_notes[tracks_currently_edited];
+                    if (tracks_conf[tracks_currently_edited] > 0)
+                        tracks_conf[tracks_currently_edited]--;
+                    if (tracks_conf[tracks_currently_edited] == 0)
+                    {
+                        midiSendNoteOff(note, 127, M8_CHANNEL);
+                    }
                     break;
                 case 9:  // Load / OK
                     break;
@@ -244,7 +267,6 @@ int main(void)
                 case 1:
                     break;
                 case 2:
-                    midiSendControlChange(64, 0, MM2_CHANNEL);
                     break;
                 case 3:
                     break;
