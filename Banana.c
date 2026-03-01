@@ -197,6 +197,14 @@ int main(void)
                     break;
                 case 2:  // button 3
                     tracks_switch_state = !tracks_switch_state;
+                    if (tracks_switch_state)
+                    {
+                        ledSetColor(2, COLOR_YELLOW, true);
+                    }
+                    else
+                    {
+                        ledSetColor(2, COLOR_BLACK, true);
+                    }
                     // Mute/Unmute the selected tracks
                     for (int i=0; i<8; i++)
                     {
@@ -245,10 +253,8 @@ int main(void)
                     uint8_t note = M8_mute_notes[tracks_currently_edited];
                     if (tracks_conf[tracks_currently_edited] > 0)
                         tracks_conf[tracks_currently_edited]--;
-                    if (tracks_conf[tracks_currently_edited] == 0)
-                    {
-                        midiSendNoteOff(note, 127, M8_CHANNEL);
-                    }
+                    // Unmute anyway
+                    midiSendNoteOff(note, 127, M8_CHANNEL);
                     break;
                 case 9:  // Load / OK
                     break;
