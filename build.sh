@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CFLAGS_c_o="-g -Os -Wall -mcall-prologues -mmcu=atmega64 -I bjdevlib/tbseries/include -I bjdevlib/lcdlib -DF_CPU=8000000UL -DTB_5_DEVICE"
+CFLAGS_c_o="-g -Os -Wall -mcall-prologues -mmcu=atmega64 -I bjdevlib/tbseries/include -I bjdevlib/lcdlib -DF_CPU=8000000UL -DTB_5_DEVICE -DLOG_ENABLED -DLOG_SEVERITY=1"
 
 mkdir -p build
 
