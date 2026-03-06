@@ -192,7 +192,6 @@ int main(void)
         lastButtonEvent = getButtonLastEvent();
         if (lastButtonEvent.actionType_ == BUTTON_PUSH)
         {
-            LOG(SEV_INFO, "Debug works : %d", 2+3);
             uint8_t buttonNumber = lastButtonEvent.buttonNum_;
             switch (buttonNumber)
             {
