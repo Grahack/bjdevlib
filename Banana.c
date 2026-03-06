@@ -81,10 +81,21 @@ void expPedalsCallback(PedalNumber n, uint8_t pos)
 {
     // Only read EXP P2 port
     if (n != 0) return;
-    // convert from 50->127 to 0->127
-    float min = 50.0;
-    float max = 127.0;
-    pos = (uint8_t)((float)pos-min)*(max/(max-min));
+    LOG(SEV_INFO, "EXP 1 pos value: %d", pos);
+    // Low shelf: 20
+    if (pos < 20)
+    {
+        pos = 0;
+        LOG(SEV_INFO, "<20 so: %d", pos);
+    }
+    else
+    {
+        // Convert from 20->127 to 0->127
+        float min = 20.0;
+        float max = 127.0;
+        pos = (uint8_t)((float)pos-min)*(max/(max-min));
+        LOG(SEV_INFO, ">=20 so: %d", pos);
+    }
     midiSendControlChange(7, pos, MM2_CHANNEL); // CC, val, chan
     LCDWriteIntXY(4, 1, pos, 3);
 }
